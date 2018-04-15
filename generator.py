@@ -22,6 +22,7 @@ for i in noise:
 """
 
 from opensimplex import OpenSimplex
+from PIL import Image
 
 height = 10
 width = 10
@@ -33,7 +34,7 @@ def main():
 	for y in range(0, height):
 		for x in range(0, width):
 			noise[y][x] = simplex.noise2d(x,y)
-	
+
 	return noise
 
 noise = main()
@@ -42,7 +43,7 @@ for i in noise:
     print()
     for o in i:
       print(o,end='')
-		
+
 
 
 """import pygame

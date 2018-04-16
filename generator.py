@@ -50,11 +50,6 @@ def generateNoiseGrid(width,height,scale,octaves,persistence,lacunarity):
     noiseScaler = preprocessing.MinMaxScaler(feature_range=(0,1))
     noiseScaled = noiseScaler.fit_transform(noise)
 
-    """
-    for y in range(0, height):
-        for x in range(0, width):
-            noise[y][x] =
-    """
     return noise #Scaled
 
 def generateImg(noiseGrid):

@@ -4,7 +4,7 @@ from PIL import Image
 
 width = 640
 height = 480
-scale = 25
+scale = 50
 
 octaves = 3
 persistence = .5
@@ -47,10 +47,11 @@ def generateNoiseGrid(width,height,scale,octaves,persistence,lacunarity):
 
             noise[y][x] = noiseHeight
 
-    noiseScaler = preprocessing.MinMaxScaler(feature_range=(0,1))
-    noiseScaled = noiseScaler.fit_transform(noise)
+    for y in range(0, height):
+        for x in range(0, width):
+            noise[y][x] = (noise[y][x]-minNoiseHeight)/(maxNoiseHeight-minNoiseHeight)
 
-    return noise #Scaled
+    return noise
 
 def generateImg(noiseGrid):
     im = Image.new('L', (width, height))

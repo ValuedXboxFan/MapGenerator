@@ -1,55 +1,36 @@
-"""
-import random
-import math
-
-random.seed(0)
-
-def generateWhiteNoise(width,height):
-    noise = [[r for r in range(width)] for i in range(height)]
-
-    for i in range(0,height):
-        for j in range(0,width):
-            noise[i][j] = random.randint(-50,50)
-
-    return noise
-
-noise = generateWhiteNoise(10,10)
-
-for i in noise:
-    print()
-    for o in i:
-      print(o,end='')
-"""
-
 from opensimplex import OpenSimplex
 from PIL import Image
 
-height = 10
-width = 10
+width = 640
+height = 480
+scale = 25
 
 def main():
-	noise = [[r for r in range(width)] for i in range(height)]
+    mapNoiseGrid = generateNoiseGrid(width,height,scale)
+    generateImg(mapNoiseGrid)
 
-	simplex = OpenSimplex()
-	for y in range(0, height):
-		for x in range(0, width):
-			noise[y][x] = simplex.noise2d(x,y)
+def generateNoiseGrid(width,height,scale):
+    noise = [[r for r in range(width)] for i in range(height)]
 
-	return noise
+    simplex = OpenSimplex()
+    for y in range(0, height):
+        for x in range(0, width):
+            samplex = x/scale
+            sampley = y/scale
+            noise[y][x] = simplex.noise2d(samplex,sampley)
 
-noise = main()
+    return noise
 
-for i in noise:
-    print()
-    for o in i:
-      print(o,end='')
+def generateImg(noiseGrid):
+    im = Image.new('L', (width, height))
+    for y in range(0, height):
+        for x in range(0, width):
+            value = noiseGrid[y][x]
+            color = int((value + 1) * 128)
+            im.putpixel((x, y), color)
+    im.save('noise2d.png')
+    im.show()
+    return
 
-
-
-"""import pygame
-import sys
-
-pygame.init()
-
-screen = pygame.display.set_mode((640,480))
-"""
+if __name__ == '__main__':
+    main()

@@ -1,3 +1,4 @@
+"""
 class TerrainType:
     def __init__(self, name, height, color):
         self.name = name
@@ -17,3 +18,17 @@ regions = [TerrainType("Grass", .9, "green"),
 for i in regions:
     print(i)
     print(i.height)
+"""
+
+width = 10
+height = 10
+
+
+#colorGrid = [width * height]
+
+colorGrid = [[r for r in range(width)] for i in range(height)]
+
+
+for y in colorGrid:
+    for x in colorGrid:
+        print (colorGrid[y][x])

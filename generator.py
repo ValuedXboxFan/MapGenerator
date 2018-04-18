@@ -1,13 +1,14 @@
+import random
 from opensimplex import OpenSimplex
 from PIL import Image
 
-width = 640
-height = 480
-scale = 75
+width = 3840
+height = 2160
+scale = 185
 
-octaves = 4
-persistence = .25
-lacunarity = 3.5
+octaves = 3
+persistence = .2
+lacunarity = 4
 
 def main():
     mapNoiseGrid = generateNoiseGrid(width,height,scale,octaves,persistence,lacunarity)
@@ -19,7 +20,7 @@ def generateNoiseGrid(width,height,scale,octaves,persistence,lacunarity):
     maxNoiseHeight = 0
     minNoiseHeight = 0
 
-    simplex = OpenSimplex()
+    simplex = OpenSimplex(seed=random.randint(0,1000000))
     for y in range(0, height):
         for x in range(0, width):
 
@@ -59,7 +60,8 @@ class TerrainType:
         self.color = color
 
 regions = [TerrainType("Water", .6, (0, 75, 255)),
-            TerrainType("Grass", .8, (20, 220, 5)),
+            TerrainType("Sand", .65, (255, 225, 60)),
+            TerrainType("Grass", .8, (10, 200, 0)),
             TerrainType("Mountain1", .9, (100, 100, 100)),
             TerrainType("Mountain2", .98, (140, 140, 140)),
             TerrainType("Mountain3", 1, (255, 255, 255))]

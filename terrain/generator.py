@@ -2,13 +2,15 @@ import random
 from opensimplex import OpenSimplex
 from PIL import Image
 
-width = 3840
-height = 2160
+width = 2000
+height = 1000
 scale = 185
 
 octaves = 3
 persistence = .2
-lacunarity = 4
+lacunarity = 5
+
+simplex = OpenSimplex(seed=random.randint(0,1000000))
 
 def main():
     mapNoiseGrid = generateNoiseGrid(width,height,scale,octaves,persistence,lacunarity)
@@ -20,7 +22,6 @@ def generateNoiseGrid(width,height,scale,octaves,persistence,lacunarity):
     maxNoiseHeight = 0
     minNoiseHeight = 0
 
-    simplex = OpenSimplex(seed=random.randint(0,1000000))
     for y in range(0, height):
         for x in range(0, width):
 
@@ -46,9 +47,6 @@ def generateNoiseGrid(width,height,scale,octaves,persistence,lacunarity):
 
 
             noiseGrid[y][x] = noiseHeight
-
-    for y in range(0, height):
-        for x in range(0, width):
             noiseGrid[y][x] = (noiseGrid[y][x]-minNoiseHeight)/(maxNoiseHeight-minNoiseHeight)
 
     return noiseGrid
@@ -59,17 +57,20 @@ class TerrainType:
         self.height = height
         self.color = color
 
-regions = [TerrainType("Water", .6, (0, 75, 255)),
-            TerrainType("Sand", .65, (255, 225, 60)),
-            TerrainType("Grass", .8, (10, 200, 0)),
-            TerrainType("Mountain1", .9, (100, 100, 100)),
-            TerrainType("Mountain2", .98, (140, 140, 140)),
-            TerrainType("Mountain3", 1, (255, 255, 255))]
+regions = [TerrainType("Water Deep", .3, (0, 100, 200)),
+            TerrainType("Water Shallow", .45, (0, 128, 255)),
+            TerrainType("Sand", .5, (255, 230, 95)),
+            TerrainType("Grass", .7, (50, 190, 0)),
+            TerrainType("Grass 2", .75, (35, 145, 0)),
+            TerrainType("Mountain1", .85, (140, 140, 140)),
+            TerrainType("Mountain2", .95, (100, 100, 100)),
+            TerrainType("Snow", 1, (255, 255, 255))]
 
 
 def generateImg(noiseGrid):
-    colorGrid = [[r for r in range(width)] for i in range(height)]
+    colorMap = []
 
+    #color
     im = Image.new('RGB', (width, height))
     for y in range(0, height):
         for x in range(0, width):
@@ -78,27 +79,30 @@ def generateImg(noiseGrid):
                 if currentHeight <= i.height:
                     color = i.color
                     break
-            #colorGrid[y][x] = color
-            im.putpixel((x, y), color)
-    #im.putdata(colorGrid)
+            colorMap.append(color)
+            #im.putpixel((x, y), color)
+    im.putdata(colorMap)
     im.save('noise2d.png')
     im.show()
     return
 
 
     """
+    #Black and White
     im = Image.new('L', (width, height))
     for y in range(0, height):
         for x in range(0, width):
             value = noiseGrid[y][x]
             color = int((value + 1) * 128)
-            #colorGrid[y][x] = color
+            #colorMap[y][x] = color
             im.putpixel((x, y), color)
-    #im.putdata(colorGrid)
+    #im.putdata(colorMap)
     im.save('noise2d.png')
     im.show()
     return
     """
+
+
 
 if __name__ == '__main__':
     main()

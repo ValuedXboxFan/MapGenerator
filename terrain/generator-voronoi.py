@@ -3,9 +3,10 @@ import math
 from opensimplex import OpenSimplex
 from PIL import Image
 
-width = 2000
-height = 1000
-scale = 185
+width = 500
+height = 250
+scale = 1
+vCells = 500
 
 octaves = 3
 persistence = .2
@@ -14,42 +15,56 @@ lacunarity = 5
 simplex = OpenSimplex(seed=random.randint(0,1000000))
 
 def main():
-    mapNoiseGrid = generateNoiseGrid(width,height,scale,octaves,persistence,lacunarity)
+    mapNoiseGrid = generateNoiseGrid(width,height,scale,vCells,octaves,persistence,lacunarity)
 
     generateImg(mapNoiseGrid)
 
-def generateNoiseGrid(width,height,scale,octaves,persistence,lacunarity):
+def generateNoiseGrid(width,height,scale,vCells,octaves,persistence,lacunarity):
     noiseGrid = [[r for r in range(width)] for i in range(height)]
+    vCoordinates = [[r for r in range(3)] for i in range(vCells)]
 
     maxNoiseHeight = 0
     minNoiseHeight = 0
 
+    for i in range(vCells):
+        vCoordinates[i][0] = random.randrange(width)
+        vCoordinates[i][1] = random.randrange(height)
+
+    for i in range(vCells):
+        amplitude = 1
+        frequency = 1
+        noiseHeight = 0
+
+        for o in range (0, octaves):
+            samplex = vCoordinates[i][0]/scale * frequency
+            sampley = vCoordinates[i][1]/scale * frequency
+
+            simplexValue = simplex.noise2d(samplex,sampley) * 2 - 1
+            noiseHeight += simplexValue * amplitude
+
+            amplitude *= persistence
+            frequency *= lacunarity
+
+
+        if noiseHeight > maxNoiseHeight:
+            maxNoiseHeight = noiseHeight
+        elif noiseHeight < minNoiseHeight:
+            minNoiseHeight = noiseHeight
+
+        vCoordinates[i][2] = noiseHeight
+
+    for i in range(vCells):
+        vCoordinates[i][2] = (vCoordinates[i][2]-minNoiseHeight)/(maxNoiseHeight-minNoiseHeight)
+
     for y in range(0, height):
         for x in range(0, width):
-
-            amplitude = 1
-            frequency = 1
-            noiseHeight = 0
-
-            for o in range (0, octaves):
-                samplex = x/scale * frequency
-                sampley = y/scale * frequency
-
-                simplexValue = simplex.noise2d(samplex,sampley) * 2 - 1
-                noiseHeight += simplexValue * amplitude
-
-                amplitude *= persistence
-                frequency *= lacunarity
-
-
-            if noiseHeight > maxNoiseHeight:
-                maxNoiseHeight = noiseHeight
-            elif noiseHeight < minNoiseHeight:
-                minNoiseHeight = noiseHeight
-
-
-            noiseGrid[y][x] = noiseHeight
-            noiseGrid[y][x] = (noiseGrid[y][x]-minNoiseHeight)/(maxNoiseHeight-minNoiseHeight)
+            dmin = math.hypot(height-1, width-1)
+            for i in range(vCells):
+                d = math.hypot(vCoordinates[i][0]-x, vCoordinates[i][1]-y)
+                if d < dmin:
+                    dmin = d
+                    j = i
+            noiseGrid[y][x] = vCoordinates[j][2]
 
     return noiseGrid
 

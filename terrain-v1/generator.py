@@ -3,8 +3,8 @@ import math
 from opensimplex import OpenSimplex
 from PIL import Image
 
-width = 2000
-height = 1000
+width = 1000
+height = 500
 scale = 185
 
 octaves = 3
@@ -47,8 +47,12 @@ def generateNoiseGrid(width,height,scale,octaves,persistence,lacunarity):
             elif noiseHeight < minNoiseHeight:
                 minNoiseHeight = noiseHeight
 
-
             noiseGrid[y][x] = noiseHeight
+            #print(noiseHeight)
+
+    for y in range(0, height):
+        for x in range(0, width):
+
             noiseGrid[y][x] = (noiseGrid[y][x]-minNoiseHeight)/(maxNoiseHeight-minNoiseHeight)
 
     return noiseGrid
